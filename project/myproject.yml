@@ -1,0 +1,23 @@
+---
+- name: docker lab environment
+  hosts: servers
+  become: True
+  become_method: sudo
+  become_user: root
+  
+  vars:
+    ansible_user: root
+
+  collections:
+    - ansible.builtin
+    - community.general
+    - infra.docker
+
+  roles:
+    - base
+
+  tasks:
+
+    - name: docker service status
+      debug:
+        var: docker_service.state

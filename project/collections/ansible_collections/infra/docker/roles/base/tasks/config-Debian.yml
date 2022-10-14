@@ -1,0 +1,44 @@
+---
+- name: Default user
+  ansible.builtin.user:
+    state: present
+    name: "{{ base_def_user }}"
+    comment: "Docker User"
+    shell: "{{ base_def_user_shell }}"
+    home: "{{ base_def_user_home }}"
+    password: "{{ def_pass | password_hash('sha512') }}"
+    update_password: "{{ base_def_user_update_pw }}" 
+
+- name: sudo group
+  ansible.builtin.group:
+    state: present
+    name: "{{ base_admin_group }}"
+    system: "{{ base_admin_group_system }}"
+  
+- name: Default admin
+  ansible.builtin.user:
+    state: present
+    append: True
+    name: "{{ base_def_user }}"
+    groups: "{{ base_admin_group }}"
+  when: base_def_user_admin
+      
+- name: docker group
+  ansible.builtin.group:
+    state: present
+    name: "{{ base_docker_group }}"
+    system: "{{ base_admin_group_system }}"
+
+- name: Default docker admin
+  ansible.builtin.user:
+    state: present
+    append: True
+    name: "{{ base_def_user }}"
+    groups: "{{ base_docker_group }}"
+
+- name: docker service 
+  ansible.builtin.systemd:
+    name: "{{ base_docker_unit }}"
+    enabled: True
+    state: started
+  register: docker_service

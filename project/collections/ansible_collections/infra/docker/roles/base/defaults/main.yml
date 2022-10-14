@@ -1,0 +1,14 @@
+---
+# defaults file for base
+#
+
+base_admin_group: sudo
+base_admin_group_system: False
+base_def_user: student
+base_def_user_shell: /bin/bash
+base_def_user_home: "/home/{{ base_def_user }}"
+base_def_user_admin: True
+base_def_user_update_pw: always
+base_docker_group: docker
+base_docker_group_system: False
+base_docker_unit: docker

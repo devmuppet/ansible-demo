@@ -1,0 +1,8 @@
+---
+# Installation of docker
+
+- name: installation tasks
+  include_tasks: "setup-{{ ansible_os_family }}.yml"
+
+- name: configuration tasks
+  include_tasks: "config-{{ ansible_os_family }}.yml"

@@ -1,0 +1,77 @@
+---
+
+- name: Distribution check
+  assert:
+    that:
+      - ansible_facts['distribution'] == "Ubuntu"
+      - ansible_distribution_release == "jammy"
+      - ansible_processor_vcpus >= 2
+      - ansible_memory_mb.real.total >= 3800
+      - (ansible_mounts|selectattr("mount", "equalto", "/")|list)[0].size_available > 5
+
+- name: Python available
+  ansible.builtin.raw: |
+    apt -y install python3 python3-pip 
+    update-alternatives --install /usr/bin/python python /usr/bin/python3 3
+  changed_when: False
+
+- name: Latest package metadata
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: All packages latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+
+- name: Requirements
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - gnupg-utils
+      - software-properties-common
+      - dirmngr
+    state: present
+
+- name: Base software collection
+  ansible.builtin.apt:
+    name:
+      - vim 
+      - vim-doc 
+      - bash-completion 
+      - psmisc 
+      - manpages 
+      - pinfo 
+      - curl 
+      - wget 
+      - elinks 
+      - indent 
+      - vim-syntax-docker 
+
+- name: Docker Repository Key
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Docker Repository
+  ansible.builtin.apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu/ focal stable
+    state: present
+
+- name: Latest package metadata
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: All packages latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+
+- name: Docker
+  ansible.builtin.apt:
+    name:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io 
+      - cgroupfs-mount 
+      - pigz
